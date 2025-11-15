@@ -29,3 +29,8 @@ Converting .dat file into .csv file:
 Converting .csv to .dat:
 
 ``P5SLDT.exe -csv [number].csv``
+
+# Known issues
+
+- It will extract 200mb~ worth of files (It should be the same size as the .BIN), Text files ends at 8185.dat, with some non-text files between 5919.dat and 8185.dat.
+- English files until 5912.dat are all multiples of 8, then 8158.dat, 8168.dat and 8178.dat (Not an issue, this helps dealing with the previous issue.)
