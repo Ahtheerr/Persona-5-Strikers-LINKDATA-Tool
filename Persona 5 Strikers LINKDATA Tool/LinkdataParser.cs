@@ -11,9 +11,8 @@ namespace P5SLDT
         public static long outSize;
         public static long unknown;
 
-        public static void ParseLinkdata(string idxName, bool isEncrypted)
+        public static void ParseLinkdata(string idxName, bool isEncrypted, bool notEverything, bool engFiles)
         {
-            var extracted = new Dictionary<(long startOffset, long outSize), string>();
             string binName = idxName.ToLowerInvariant().Replace(".idx", ".bin");
             if (!Path.Exists(binName))
             {
@@ -31,24 +30,31 @@ namespace P5SLDT
                     outSize = idxReader.ReadInt64();
                     idxReader.ReadInt64(); // outSize repeated
                     unknown = idxReader.ReadInt64(); // I don't know lmao
-                    var key = (startOffset, outSize);
-                    if (extracted.ContainsKey(key))
-                    {
-                        Console.WriteLine($"Duplicate entry found at index {i}, skipping extraction.");
-                        continue;
-                    }
-                    extracted[key] = $"Output\\{i}.dat";
                     binReader.BaseStream.Seek(startOffset, SeekOrigin.Begin);
                     byte[] bytes = binReader.ReadBytes((int)outSize);
                     if (isEncrypted)
                     {
                         LinkEncryption.Decrypt(bytes, (uint)i);
                     }
+                    if (notEverything)
+                    {
+                        if (bytes.Length == 0) continue;
+                        if (bytes[0] == 0x00 &&
+                            bytes[1] == 0x19 &&
+                            bytes[2] == 0x12 &&
+                            bytes[3] == 0x16) ;
+                        else continue;
+                    }
+                    if (engFiles)
+                    {
+                        if (i > 5912 && i != 8158 && i != 8168 && i != 8178) continue;
+                        if (i > 0 && i != 8158 && i != 8168 && i != 8178 && i % 8 != 0) continue;
+                    }
                     if (!Directory.Exists("Output")) Directory.CreateDirectory("Output");
                     File.WriteAllBytes($"Output\\{i}.dat", bytes.ToArray());
 
                 }
-                Console.WriteLine($"Extracted {extracted.Count} files to the Output folder.");
+                Console.WriteLine($"Extracted files to the Output folder.");
             }
         }
         public static void PackLinkdata(string datName, string idxName, bool isEncrypted)

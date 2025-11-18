@@ -16,17 +16,21 @@ namespace P5SLDT
             if (args[0].ToLowerInvariant() == "-linkdata")
             {
                 bool isEncrypted = false;
+                bool notEverything = true;
+                bool engFiles = false;
                 if (Path.GetExtension(args[1]).ToLowerInvariant() == ".idx")
                 {
-                    if (args.Length == 3 && args[2].ToLowerInvariant() == "-dec") isEncrypted = true;
-                    LinkdataParser.ParseLinkdata(args[1], isEncrypted);
+                    if (args.Contains("-dec")) isEncrypted = true;
+                    if (args.Contains("-everything")) notEverything = false;
+                    if (args.Contains("-eng")) engFiles = true;
+                    LinkdataParser.ParseLinkdata(args[1], isEncrypted, notEverything, engFiles);
                     return;
                 }
                 else if (Path.GetExtension(args[1]).ToLowerInvariant() == ".dat")
                 {
                     if (Path.GetExtension(args[2]).ToLowerInvariant() == ".idx")
                     {
-                        if (args.Length == 4 && args[3].ToLowerInvariant() == "-enc") isEncrypted = true;
+                        if (args.Contains("-enc")) isEncrypted = true;
                         LinkdataParser.PackLinkdata(args[1], args[2], isEncrypted);
                         return;
                     }
