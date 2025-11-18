@@ -31,7 +31,7 @@ The primary executable is `P5SLDT.exe`.
 | **`-linkdata LINKDATA.IDX`** | Specifies the index file to use. | Required |
 | **`-dec`** | **Decrypts** the files before extraction. | **Only needed for PC LINKDATA.** |
 | **`-everything`** | Extracts all files, ignoring file structure checks (includes broken, redundant, and non-text files). | Optional |
-| **`-eng`** | Extracts only files identified as **English** text files. | Optional |
+| **`-eng`** | Extracts only files identified as **English** text files. | Optional (PC ONLY) |
 
 #### **Packing Files**
 
