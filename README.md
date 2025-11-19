@@ -31,7 +31,7 @@ The primary executable is `P5SLDT.exe`.
 | **`-linkdata LINKDATA.IDX`** | Specifies the index file to use. | Required |
 | **`-dec`** | **Decrypts** the files before extraction. | **Only needed for PC LINKDATA.** |
 | **`-everything`** | Extracts all files, ignoring file structure checks (includes broken, redundant, and non-text files). | Optional |
-| **`-eng`** | Extracts only files identified as **English** text files. | Optional |
+| **`-eng`** | Extracts only files identified as **English** text files. | Optional (PC ONLY) |
 
 #### **Packing Files**
 
@@ -69,9 +69,10 @@ The tool handles conversion between the game's `.dat` format and standard `.csv`
 
 ## ⚠️ Known Issues & File Structure Notes
 
-  * **Extraction Size:** The tool extracts approximately **200 MB** worth of files (this size should match the size of the original `.BIN` file).
+  * **Extraction Size:** The tool extracts approximately **200 MB** worth of files when using `-everything` (this size should match the size of the original `.BIN` file).
   * **Text File Range:** Text files generally end at **`8185.dat`**.
       * There are a few **non-text files** interspersed between `5919.dat` and `8185.dat`.
   * **English File Indexing (Helpful Pattern):**
       * English files up to `5912.dat` are all files whose index numbers are **multiples of 8**.
       * After this, the notable English files are `8158.dat`, `8168.dat`, and `8178.dat`. (This pattern can be useful for targeted extraction.)
+      * English files are always the first one, so 0 is an English file, and 1-7 are the same file from other languages.
