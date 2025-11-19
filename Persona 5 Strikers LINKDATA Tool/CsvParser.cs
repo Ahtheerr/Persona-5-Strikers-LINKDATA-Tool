@@ -23,61 +23,53 @@ namespace P5SLDT
                 writer.Write((int)0x16121900);
                 int lineCount = 0;
                 int sectionCount = 0;
+                var allRecords = new List<string[]>();
                 var springField = new List<byte>();
-                csv.Read();
-                string type1_0 = csv.GetField<string>(1);
-                csv.Read();
-                string type1_1 = csv.GetField<string>(1);
-                lineCount += 2;
                 while (csv.Read())
                 {
-                    lineCount++;
+                    allRecords.Add(csv.Parser.Record);
                 }
+                lineCount = allRecords.Count;
                 writer.Write(lineCount);
-                csvFs.Seek(0, SeekOrigin.Begin);
-                csv.Read();
-                if (type1_0 == "0" && type1_1 == "1")
+                if (allRecords[0].Length > 1 && allRecords[0][1] == "0" && allRecords[1][1] == "1")
                 {
-                    sectionCount = csv.Parser.Record.Length * 2 + 2;
+                    sectionCount = allRecords[0].Length * 2 + 2;
                     writer.Write(sectionCount);
                     datFs.Seek(0x40, SeekOrigin.Begin);
                     for (int i = 0; i < lineCount; i++)
                     {
-                        for (int j = 0; j < sectionCount / 2 - 1; j++)
+                        for (int j = 0; j < allRecords[0].Length; j++)
                         {
                             if (j == 0)
                             {
                                 writer.Write(springField.Count);
-                                springField.AddRange(Encoding.UTF8.GetBytes(csv.GetField<string>(j).Replace("[1B]", "\u001b") + "\u0000"));
-                                continue;
+                                springField.AddRange(Encoding.UTF8.GetBytes(allRecords[i][j].Replace("[1B]", "\u001b") + "\u0000"));
                             }
-                            writer.Write(csv.GetField<short>(j));
+                            else writer.Write(Convert.ToInt16(allRecords[i][j]));
                         }
-                        csv.Read();
                     }
                     writer.Write(springField.ToArray());
-                    Console.WriteLine($"CSV file parsed to {Path.GetFileName(datFs.Name)}");
+                    Console.WriteLine($"CSV file packed to {Path.GetFileName(datFs.Name)}");
                     return;
                 }
-                sectionCount = (csv.Parser.Record.Length + 1) * 4;
+                sectionCount = allRecords[0].Length * 4 + 4;
                 writer.Write(sectionCount);
                 datFs.Seek(0x40, SeekOrigin.Begin);
                 for (int i = 0; i < lineCount; i++)
                 {
-                    for (int j = 0; j < sectionCount / 4; j++)
+                    for (int j = 0; j < allRecords[0].Length + 1; j++)
                     {
-                        if (j == sectionCount / 4 - 1)
+                        if (j == allRecords[0].Length)
                         {
                             writer.Write(i);
                             break;
                         }
                         writer.Write(springField.Count);
-                        springField.AddRange(Encoding.UTF8.GetBytes(csv.GetField<string>(j).Replace("[1B]", "\u001b") + "\u0000"));
+                        springField.AddRange(Encoding.UTF8.GetBytes(allRecords[i][j].Replace("[1B]", "\u001b") + "\u0000"));
                     }
-                    csv.Read();
                 }
                 writer.Write(springField.ToArray());
-                Console.WriteLine($"CSV file parsed to {Path.GetFileName(datFs.Name)}");
+                Console.WriteLine($"CSV file packed to {Path.GetFileName(datFs.Name)}");
             }
         }
     }

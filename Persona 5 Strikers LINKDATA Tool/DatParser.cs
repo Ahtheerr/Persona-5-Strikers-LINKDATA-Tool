@@ -23,7 +23,7 @@ namespace P5SLDT
                 int sectionNum = reader.ReadInt32();
                 int textSectionStart = lineNum * sectionNum + 0x40;
                 reader.BaseStream.Seek(0x44, SeekOrigin.Begin);
-                if (reader.ReadInt16() == 0)
+                if (sectionNum > 8 && reader.ReadInt16() == 0)
                 {
                     reader.BaseStream.Seek(0x40, SeekOrigin.Begin);
                     for (int i = 0; i < lineNum; i++)
